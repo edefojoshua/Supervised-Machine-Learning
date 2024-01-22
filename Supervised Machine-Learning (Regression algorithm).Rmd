@@ -1,0 +1,86 @@
+---
+title: "Supervised MachineLearning."
+subtitle: Regression (algorithm) model as a predictive tool
+author: "Joshua Edefo"
+email: "edefojoshua2000@yahoo.com"
+date: "2024-01-22"
+output: github_document
+---
+Library
+```{r a, messagee=FALSE}
+library(caTools)
+```
+
+Import data
+
+```{r b}
+# import data and check the data, 
+ep <- read.csv("C:/Users/joe62/OneDrive - Aberystwyth University/Apps/Desktop/R code/ep.csv")
+head(ep)
+str(ep)
+summary(ep)
+plot(ep)
+```
+
+Getting the best regression model
+
+```{r c}
+# set seed
+set.seed(12)
+
+# cheak for multicolinearity , and correlation of indepedent variables with dependent variable
+cor(ep, method="pearson")
+# no multicolineraity
+# correlaion between qol and n_med is weak so drop n_med
+# best model will be qol~n_epil+ adh that the model excluding the n_med variable
+```
+
+ Splitting the dataset
+
+```{r d}
+
+split <- sample.split( ep, SplitRatio= 0.8)
+#80% training set and 20% testing set
+
+train<- subset(ep, split == "TRUE")
+train
+str(train)
+test <- subset(ep, split== "FALSE")
+test
+str(test)
+
+```
+
+Create and use the best Regression model
+```{r e}
+
+# Best R model 
+R_best_model <- lm(qol~n_epil+ adh, data= train)
+summary(R_best_model)
+
+```
+
+Using the model as a predictive tool
+```{r f}
+
+predict<-predict(R_best_model, data=test)
+
+```
+Validating the model
+
+```{r g}
+#comparing prdicteed versus actual values
+plot(test$qol, type='l', lty = 1.8, col= 'red',)
+lines(predict, type='l', lty = 1.8, col= 'blue')
+
+
+#finding accuracy
+
+rmse<-sqrt(mean(train$qol-predict)^2)
+
+```
+Session information
+
+```{r h, message=FALSE}
+sessionInfo()
+```
